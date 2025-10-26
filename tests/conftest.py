@@ -26,7 +26,7 @@ def aws_credentials():
     os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
     os.environ["AWS_SECURITY_TOKEN"] = "testing"
     os.environ["AWS_SESSION_TOKEN"] = "testing"
-    os.environ["AWS_DEFAULT_REGION"] = "us-east-1"
+    os.environ["AWS_DEFAULT_REGION"] = "eu-west-1"
     # Set Lambda environment variables for testing
     os.environ["ORDERS_TABLE_NAME"] = "test-orders-table"
     os.environ["EVENT_BUS_NAME"] = "test-event-bus"
