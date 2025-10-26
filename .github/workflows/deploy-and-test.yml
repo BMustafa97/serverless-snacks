@@ -1,0 +1,113 @@
+name: Deploy and Test Serverless Snacks
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+env:
+  AWS_REGION: eu-west-1  # Change this to your preferred AWS region
+  PYTHON_VERSION: '3.9'
+  NODE_VERSION: '18'
+
+jobs:
+  deploy-and-test:
+    runs-on: ubuntu-latest
+    
+    # Required permissions for AWS deployment
+    permissions:
+      contents: read
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+    
+    - name: Set up Node.js (for AWS CDK)
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    
+    - name: Cache Python dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    
+    - name: Cache CDK dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+    
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+    
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Install AWS CDK
+      run: |
+        npm install -g aws-cdk@latest
+    
+    - name: Verify AWS connection
+      run: |
+        aws sts get-caller-identity
+        aws configure list
+    
+    - name: Bootstrap CDK (if needed)
+      run: |
+        # Check if bootstrap is needed
+        if ! aws cloudformation describe-stacks --stack-name CDKToolkit --region ${{ env.AWS_REGION }} >/dev/null 2>&1; then
+          echo "Bootstrapping CDK..."
+          cdk bootstrap aws://$(aws sts get-caller-identity --query Account --output text)/${{ env.AWS_REGION }}
+        else
+          echo "CDK already bootstrapped"
+        fi
+    
+    - name: Synthesize CDK stack
+      run: |
+        cdk synth
+    
+    - name: Deploy and Test
+      run: |
+        chmod +x ./deploy-and-test.sh
+        ./deploy-and-test.sh
+      env:
+        AWS_DEFAULT_REGION: ${{ env.AWS_REGION }}
+    
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-results
+        path: |
+          test_response.json
+          cdk.out/
+        retention-days: 7
+    
+    # Optional: Clean up resources on failure (uncomment if needed)
+    # - name: Cleanup on failure
+    #   if: failure()
+    #   run: |
+    #     echo "Cleaning up resources due to failure..."
+    #     cdk destroy --force || true

@@ -1,0 +1,76 @@
+name: Deploy Only (Manual Testing)
+
+# This workflow only deploys the stack without running tests
+# Use this for faster deployments when you want to test manually
+
+on:
+  workflow_dispatch:  # Manual trigger only
+    inputs:
+      environment:
+        description: 'Environment'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+        - dev
+
+env:
+  AWS_REGION: us-east-1
+  PYTHON_VERSION: '3.9'
+  NODE_VERSION: '18'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    
+    permissions:
+      contents: read
+      id-token: write
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        npm install -g aws-cdk@latest
+    
+    - name: Bootstrap CDK
+      run: |
+        if ! aws cloudformation describe-stacks --stack-name CDKToolkit --region ${{ env.AWS_REGION }} >/dev/null 2>&1; then
+          cdk bootstrap aws://$(aws sts get-caller-identity --query Account --output text)/${{ env.AWS_REGION }}
+        fi
+    
+    - name: Deploy CDK stack
+      run: |
+        cdk deploy --require-approval never
+      env:
+        ENVIRONMENT: ${{ github.event.inputs.environment }}
+    
+    - name: Output deployment info
+      run: |
+        echo "✅ Deployment completed for environment: ${{ github.event.inputs.environment }}"
+        echo "📍 Region: ${{ env.AWS_REGION }}"
+        echo "🔗 Manual testing commands:"
+        echo "aws lambda invoke --function-name order-creator --payload '{...}' response.json"
+        echo "aws dynamodb scan --table-name Orders"
