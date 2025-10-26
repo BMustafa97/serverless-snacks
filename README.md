@@ -34,7 +34,7 @@ This project creates a small serverless system with two Lambda functions and Dyn
 - ✅ Create Lambda B using CDK
 - ✅ Implement event-driven connection between Lambda A and Lambda B, event buses
 - ✅ Configure IAM roles and permissions for both Lambdas
-- [ ] Set up CloudWatch logging for both functions
+- ✅  Set up CloudWatch logging for both functions
 
 ### Phase 3: Implementation & Testing
 
@@ -43,7 +43,7 @@ This project creates a small serverless system with two Lambda functions and Dyn
 - ✅ Test event-driven communication between functions
 - ✅ Implement error handling and monitoring
 - ✅ Create deployment pipeline
-- [ ] Document API endpoints and usage
+- ✅  Document API endpoints and usage
 
 ## Getting Started
 
