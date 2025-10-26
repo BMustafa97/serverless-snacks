@@ -43,30 +43,6 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    
-    - name: Run Unit Tests
-      continue-on-error: true
-      run: |
-        echo "🧪 Running Unit Tests (Standalone)"
-        mkdir -p test-reports
-        
-        # Run unit tests with coverage
-        pytest tests/ \
-          --junitxml=test-reports/junit.xml \
-          --cov-report=xml:test-reports/coverage.xml \
-          --cov-report=html:test-reports/htmlcov \
-          --cov-report=term-missing \
-          --cov-fail-under=0 \
-          -v
-    
-    - name: Upload Unit Test Results
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: standalone-unit-test-results
-        path: |
-          test-reports/
-        retention-days: 30
 
   deploy-and-test:
     runs-on: ubuntu-latest
