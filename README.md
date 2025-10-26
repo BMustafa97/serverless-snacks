@@ -23,23 +23,23 @@ This project creates a small serverless system with two Lambda functions and Dyn
 - ✅ Create a GitHub repository for the project
 - ✅ Upload initial README to repository (this marks the official start time)
 - ✅ Verify AWS credentials are working correctly
-- ❌ Set up AWS CDK environment and dependencies (blocked by import issues)
-- [ ] Initialise CDK project structure
+- ✅ Set up AWS CDK environment and dependencies (blocked by import issues)
+- ✅ Initialise CDK project structure
 
 ### Phase 2: Infrastructure Development
 
-- [ ] Design the architecture for Lambda A and Lambda B
-- [ ] Create Lambda A using CDK
-- [ ] Create Lambda B using CDK
-- [ ] Implement event-driven connection between Lambda A and Lambda B
-- [ ] Configure IAM roles and permissions for both Lambdas
+- ✅ Design the architecture for Lambda A and Lambda B
+- ✅ Create Lambda A using CDK
+- ✅ Create Lambda B using CDK
+- ✅ Implement event-driven connection between Lambda A and Lambda B, event buses
+- ✅ Configure IAM roles and permissions for both Lambdas
 - [ ] Set up CloudWatch logging for both functions
 
 ### Phase 3: Implementation & Testing
 
-- [ ] Implement business logic for Lambda functions
-- [ ] Set up DynamoDB tables and schemas
-- [ ] Test event-driven communication between functions
+- ✅ Implement business logic for Lambda functions
+- ✅ Set up DynamoDB tables and schemas
+- ✅ Test event-driven communication between functions
 - [ ] Implement error handling and monitoring
 - [ ] Create deployment pipeline
 - [ ] Document API endpoints and usage
@@ -50,8 +50,6 @@ This project creates a small serverless system with two Lambda functions and Dyn
 
 - AWS CLI configured with appropriate permissions
 - Node.js (version 18.x or later)
-- AWS CDK CLI installed globally
-- TypeScript knowledge (if using TypeScript)
 
 ### Installation
 
