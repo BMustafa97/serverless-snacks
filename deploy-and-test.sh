@@ -112,9 +112,10 @@ aws dynamodb scan --table-name Orders \
 print_status "Test 3: Checking recent Lambda logs..."
 echo ""
 echo "Order Creator logs (last 5 minutes):"
+START_TIME=$(($(date +%s) - 300))000
 aws logs filter-log-events \
     --log-group-name "/aws/lambda/order-creator" \
-    --start-time $(date -d '5 minutes ago' +%s)000 \
+    --start-time $START_TIME \
     --query 'events[*].message' \
     --output text | head -10
 
@@ -122,7 +123,7 @@ echo ""
 echo "Order Processor logs (last 5 minutes):"
 aws logs filter-log-events \
     --log-group-name "/aws/lambda/order-processor" \
-    --start-time $(date -d '5 minutes ago' +%s)000 \
+    --start-time $START_TIME \
     --query 'events[*].message' \
     --output text | head -10
 
