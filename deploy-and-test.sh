@@ -72,16 +72,22 @@ print_status "Running integration tests..."
 print_status "Test 1: Creating a test order..."
 RESPONSE_FILE="test_response.json"
 
+# Create a temporary payload file to avoid base64 encoding issues
+PAYLOAD_FILE="test_payload.json"
+cat > $PAYLOAD_FILE << 'EOF'
+{
+    "customerName": "Test Customer",
+    "snackItems": [
+        {"name": "Test Chips", "quantity": 2, "price": 3.99},
+        {"name": "Test Soda", "quantity": 1, "price": 1.99}
+    ],
+    "totalAmount": 9.97
+}
+EOF
+
 aws lambda invoke \
     --function-name order-creator \
-    --payload '{
-        "customerName": "Test Customer",
-        "snackItems": [
-            {"name": "Test Chips", "quantity": 2, "price": 3.99},
-            {"name": "Test Soda", "quantity": 1, "price": 1.99}
-        ],
-        "totalAmount": 9.97
-    }' \
+    --payload file://$PAYLOAD_FILE \
     $RESPONSE_FILE
 
 if [ $? -eq 0 ]; then
@@ -121,7 +127,7 @@ aws logs filter-log-events \
     --output text | head -10
 
 # Clean up
-rm -f $RESPONSE_FILE
+rm -f $RESPONSE_FILE $PAYLOAD_FILE
 
 print_status "Testing completed!"
 echo ""
