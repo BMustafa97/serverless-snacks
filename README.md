@@ -19,10 +19,10 @@ This project creates a small serverless system with two Lambda functions and Dyn
 
 ### Phase 1: Initial Setup
 
-- [ ] Review all requirements in the technical exercise PDF
-- [ ] Create a GitHub repository for the project
-- [ ] Upload initial README to repository (this marks the official start time)
-- [ ] Verify AWS credentials are working correctly
+- ✅ Review all requirements in the technical exercise PDF
+- ✅ Create a GitHub repository for the project
+- ✅ Upload initial README to repository (this marks the official start time)
+- ✅ Verify AWS credentials are working correctly
 - [ ] Set up AWS CDK environment and dependencies
 - [ ] Initialise CDK project structure
 
