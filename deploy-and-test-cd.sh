@@ -70,27 +70,18 @@ print_status "Running integration tests..."
 
 # Test 1: Create an order using stored test event
 print_status "Test 1: Creating a test order using 'main-test' event..."
-RESPONSE_FILE="test_response.json"
 
-# First, get the stored test event payload
-print_status "Retrieving stored test event 'main-test'..."
-TEST_EVENT_PAYLOAD=$(aws lambda get-function-event-invoke-config \
-    --function-name order-creator \
-    --query 'configuration.LastModified' \
-    --output text 2>/dev/null || echo "")
-
-# If we can't retrieve the stored event, we'll invoke with minimal payload to trigger the function
-# The function should have the 'main-test' event configured internally
+# Invoke the Lambda function with the main-test event
+# The function should handle the test internally and log results
 aws lambda invoke \
     --function-name order-creator \
     --invocation-type RequestResponse \
     --payload '{"testEvent": "main-test"}' \
-    $RESPONSE_FILE
+    /dev/null
 
 if [ $? -eq 0 ]; then
-    print_status "Order creation test passed ✅"
-    echo "Response:"
-    cat $RESPONSE_FILE | python3 -m json.tool
+    print_status "Order creation test invoked successfully ✅"
+    print_status "Check CloudWatch logs for detailed results"
 else
     print_error "Order creation test failed ❌"
 fi
@@ -124,8 +115,7 @@ aws logs filter-log-events \
     --query 'events[*].message' \
     --output text | head -10
 
-# Clean up
-rm -f $RESPONSE_FILE
+# No cleanup needed - using /dev/null for response
 
 print_status "Testing completed!"
 echo ""
