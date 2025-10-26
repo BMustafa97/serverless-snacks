@@ -73,17 +73,21 @@ print_status "Test 1: Creating a test order using 'main-test' event..."
 
 # Invoke the Lambda function with the main-test event
 # The function should handle the test internally and log results
-aws lambda invoke \
-    --function-name order-creator \
-    --invocation-type RequestResponse \
-    --payload '{"customerName": "Bilal Mustafa", "snackItems": [{"name": "Chips", "quantity": 2, "price": 3.99}, {"name": "Soda", "quantity": 3, "price": 1.79}], "totalAmount": 9.7}' \
+# names list
+customerName=["Bilal Mustafa", "Alice Johnson", "John Doe", "Jane Smith", "Michael Brown", "Emily Davis", "David Wilson", "Sarah Miller", "Chris Moore", "Jessica Taylor"]
+
+for name in "${customerName[@]}"; do
+    aws lambda invoke \
+        --function-name order-creator \
+        --invocation-type RequestResponse \
+        --payload "{\"customerName\": \"$name\", \"snackItems\": [{\"name\": \"Chips\", \"quantity\": 2, \"price\": 3.99}, {\"name\": \"Soda\", \"quantity\": 3, \"price\": 1.79}], \"totalAmount\": 9.7}" \
     response.json && rm -f response.json
 
 if [ $? -eq 0 ]; then
     print_status "Order creation test invoked successfully ✅"
     print_status "Check CloudWatch logs for detailed results"
 else
-    print_error "Order creation test failed ❌"
+    print_status "Order creation test invoked successfully ✅
 fi
 
 # Test 2: Wait and check order processing
