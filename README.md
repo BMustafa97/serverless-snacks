@@ -6,6 +6,8 @@ A technical exercise demonstrating event-driven serverless architecture using AW
 
 This project creates a small serverless system with two Lambda functions and DynamoDB, connected by an event-driven mechanism. The architecture showcases modern serverless patterns and AWS best practices.
 
+### Start Time: 20:24 26/10/2025
+
 ## Architecture
 
 - **Lambda A**: [Description to be added]
