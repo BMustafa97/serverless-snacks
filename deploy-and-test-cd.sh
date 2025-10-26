@@ -76,7 +76,7 @@ print_status "Test 1: Creating a test order using 'main-test' event..."
 aws lambda invoke \
     --function-name order-creator \
     --invocation-type RequestResponse \
-    --payload '{"customerName": "John Doe", "snackItems": [{"name": "Chips", "quantity": 2, "price": 3.99}, {"name": "Soda", "quantity": 1, "price": 1.99}], "totalAmount": 9.97}' \
+    --payload '{"customerName": "Bilal Mustafa", "snackItems": [{"name": "Chips", "quantity": 2, "price": 3.99}, {"name": "Soda", "quantity": 3, "price": 1.79}], "totalAmount": 9.7}' \
     response.json && rm -f response.json
 
 if [ $? -eq 0 ]; then
