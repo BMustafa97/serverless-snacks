@@ -75,12 +75,15 @@ print_status "Test 1: Creating a test order using 'main-test' event..."
 # The function should handle the test internally and log results
 # names list
 customerName=["Bilal Mustafa", "Alice Johnson", "John Doe", "Jane Smith", "Michael Brown", "Emily Davis", "David Wilson", "Sarah Miller", "Chris Moore", "Jessica Taylor"]
+# loop through names and choose one at random
+RANDOM_NAME=${customerName[$RANDOM % ${#customerName[@]}]}
+echo "Using customer name: $RANDOM_NAME"
 
 for name in "${customerName[@]}"; do
     aws lambda invoke \
         --function-name order-creator \
         --invocation-type RequestResponse \
-        --payload "{\"customerName\": \"$name\", \"snackItems\": [{\"name\": \"Chips\", \"quantity\": 2, \"price\": 3.99}, {\"name\": \"Soda\", \"quantity\": 3, \"price\": 1.79}], \"totalAmount\": 9.7}" \
+        --payload "{\"customerName\": \"$RANDOM_NAME\", \"snackItems\": [{\"name\": \"Chips\", \"quantity\": 2, \"price\": 3.99}, {\"name\": \"Soda\", \"quantity\": 3, \"price\": 1.79}], \"totalAmount\": 9.7}" \
     response.json && rm -f response.json
 
 if [ $? -eq 0 ]; then
