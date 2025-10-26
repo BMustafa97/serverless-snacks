@@ -25,6 +25,9 @@ except ImportError:
 import sys
 import os
 
+# Set environment variables before importing lambda function
+os.environ.setdefault('ORDERS_TABLE_NAME', 'test-orders-table')
+
 # Add the lambda function directory to the path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../lambda_functions/order_processor'))
 
@@ -38,6 +41,7 @@ class TestOrderProcessor:
     @pytest.fixture(autouse=True)
     def setup_method(self):
         """Set up test environment variables."""
+        # This should already be set by aws_credentials fixture, but ensure it's set
         os.environ['ORDERS_TABLE_NAME'] = 'test-orders-table'
 
     @pytest.fixture

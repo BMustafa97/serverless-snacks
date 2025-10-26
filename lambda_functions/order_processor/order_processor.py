@@ -14,7 +14,7 @@ dynamodb = boto3.resource('dynamodb')
 
 # Environment variables
 import os
-ORDERS_TABLE_NAME = os.environ['ORDERS_TABLE_NAME']
+ORDERS_TABLE_NAME = os.environ.get('ORDERS_TABLE_NAME', 'test-orders-table')
 
 def decimal_default(obj):
     """JSON serializer for Decimal types"""

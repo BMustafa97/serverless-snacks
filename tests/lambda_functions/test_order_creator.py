@@ -28,6 +28,10 @@ except ImportError:
 import sys
 import os
 
+# Set environment variables before importing lambda function
+os.environ.setdefault('ORDERS_TABLE_NAME', 'test-orders-table')
+os.environ.setdefault('EVENT_BUS_NAME', 'test-event-bus')
+
 # Add the lambda function directory to the path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../lambda_functions/order_creator'))
 
@@ -41,6 +45,7 @@ class TestOrderCreator:
     @pytest.fixture(autouse=True)
     def setup_method(self):
         """Set up test environment variables."""
+        # These should already be set by aws_credentials fixture, but ensure they're set
         os.environ['ORDERS_TABLE_NAME'] = 'test-orders-table'
         os.environ['EVENT_BUS_NAME'] = 'test-event-bus'
 
@@ -345,9 +350,10 @@ class TestOrderCreator:
 
         response = order_creator.handler(malformed_event, sample_context)
 
-        assert response['statusCode'] == 500
+        assert response['statusCode'] == 400
         response_body = json.loads(response['body'])
-        assert response_body['error'] == 'Internal Server Error'
+        assert response_body['error'] == 'Bad Request'
+        assert 'Invalid JSON format' in response_body['message']
 
     @mock_dynamodb
     @mock_events

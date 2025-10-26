@@ -16,8 +16,8 @@ eventbridge = boto3.client('events')
 
 # Environment variables
 import os
-ORDERS_TABLE_NAME = os.environ['ORDERS_TABLE_NAME']
-EVENT_BUS_NAME = os.environ['EVENT_BUS_NAME']
+ORDERS_TABLE_NAME = os.environ.get('ORDERS_TABLE_NAME', 'test-orders-table')
+EVENT_BUS_NAME = os.environ.get('EVENT_BUS_NAME', 'test-event-bus')
 
 def handler(event: Dict[str, Any], context) -> Dict[str, Any]:
     """
@@ -43,7 +43,10 @@ def handler(event: Dict[str, Any], context) -> Dict[str, Any]:
         # Parse the order data
         if 'body' in event:
             # Handle API Gateway invocation
-            order_data = json.loads(event['body'])
+            try:
+                order_data = json.loads(event['body'])
+            except json.JSONDecodeError as e:
+                raise ValueError(f"Invalid JSON format: {str(e)}")
         else:
             # Handle direct invocation
             order_data = event
@@ -123,7 +126,7 @@ def handler(event: Dict[str, Any], context) -> Dict[str, Any]:
             })
         }
         
-    except ValueError as e:
+    except (ValueError, json.JSONDecodeError) as e:
         logger.error(f"Validation error: {str(e)}")
         return {
             'statusCode': 400,
