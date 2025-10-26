@@ -74,24 +74,26 @@ print_status "Test 1: Creating a test order using 'main-test' event..."
 # Invoke the Lambda function with the main-test event
 # The function should handle the test internally and log results
 # names list
-customerName=["Bilal Mustafa", "Alice Johnson", "John Doe", "Jane Smith", "Michael Brown", "Emily Davis", "David Wilson", "Sarah Miller", "Chris Moore", "Jessica Taylor"]
+customerNames=("Bilal Mustafa" "John Doe" "Jane Smith" "Michael Brown" "Emily Davis" "David Wilson" "Sarah Miller" "Chris Moore" "Jessica Taylor")
 # loop through names and choose one at random
-RANDOM_NAME=${customerName[$RANDOM % ${#customerName[@]}]}
+RANDOM_NAME=${customerNames[$RANDOM % ${#customerNames[@]}]}
 echo "Using customer name: $RANDOM_NAME"
 
-for name in "${customerName[@]}"; do
+for name in "${customerNames[@]}"; do
     aws lambda invoke \
         --function-name order-creator \
         --invocation-type RequestResponse \
-        --payload "{\"customerName\": \"$RANDOM_NAME\", \"snackItems\": [{\"name\": \"Chips\", \"quantity\": 2, \"price\": 3.99}, {\"name\": \"Soda\", \"quantity\": 3, \"price\": 1.79}], \"totalAmount\": 9.7}" \
+        --payload "{\"customerName\": \"$name\", \"snackItems\": [{\"name\": \"Chips\", \"quantity\": 2, \"price\": 3.99}, {\"name\": \"Soda\", \"quantity\": 3, \"price\": 1.79}], \"totalAmount\": 9.7}" \
     response.json && rm -f response.json
 
-if [ $? -eq 0 ]; then
-    print_status "Order creation test invoked successfully ✅"
-    print_status "Check CloudWatch logs for detailed results"
-else
-    print_status "Order creation test invoked successfully ✅
-fi
+    if [ $? -eq 0 ]; then
+        print_status "Order creation test invoked successfully ✅"
+        print_status "Check CloudWatch logs for detailed results"
+    else
+        print_error "Order creation test failed ❌"
+        exit 1
+    fi
+done
 
 # Test 2: Wait and check order processing
 print_status "Test 2: Waiting for order processing (10 seconds)..."
