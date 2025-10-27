@@ -80,7 +80,7 @@ for name in "${customerNames[@]}"; do
     aws lambda invoke \
         --function-name order-creator \
         --invocation-type RequestResponse \
-        --payload "{\"customerName\": \"$name\", \"snackItems\": [{\"name\": \"Chips\", \"quantity\": 2, \"price\": 3.99}, {\"name\": \"Soda\", \"quantity\": 3, \"price\": 1.79}], \"totalAmount\": 9.7}" \
+        --payload "{\"customerName\": \"$name\", \"snackItems\": [{\"name\": \"Test Chips\", \"quantity\": 2, \"price\": 3.99}, {\"name\": \"Test Soda\", \"quantity\": 1, \"price\": 1.99}], \"totalAmount\": 9.97}" \
     response.json && rm -f response.json
 
     if [ $? -eq 0 ]; then
