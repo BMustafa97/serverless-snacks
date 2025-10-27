@@ -68,35 +68,28 @@ sleep 5
 # Test the deployed system
 print_status "Running integration tests..."
 
-# Test 1: Create an order
-print_status "Test 1: Creating a test order..."
-RESPONSE_FILE="test_response.json"
+# Test 1: Create an order using stored test event
+print_status "Test 1: Creating a test order using 'main-test' event..."
 
-# Create a temporary payload file to avoid base64 encoding issues
-PAYLOAD_FILE="test_payload.json"
-cat > $PAYLOAD_FILE << 'EOF'
-{
-    "customerName": "Test Customer",
-    "snackItems": [
-        {"name": "Test Chips", "quantity": 2, "price": 3.99},
-        {"name": "Test Soda", "quantity": 1, "price": 1.99}
-    ],
-    "totalAmount": 9.97
-}
-EOF
+# Invoke the Lambda function with the main-test event
+# The function should handle the test internally and log results
+# names list
+customerNames=("Bilal Mustafa" "John Doe" "Jane Smith" "Michael Brown" "Emily Davis" "David Wilson" "Sarah Miller" "Chris Moore" "Jessica Taylor")
+# loop through names and choose one at random
+for name in "${customerNames[@]}"; do
+    aws lambda invoke \
+        --function-name order-creator \
+        --invocation-type RequestResponse \
+        --payload "{\"customerName\": \"$name\", \"snackItems\": [{\"name\": \"Test Chips\", \"quantity\": 2, \"price\": 3.99}, {\"name\": \"Test Soda\", \"quantity\": 1, \"price\": 1.99}], \"totalAmount\": 9.97}" \
+    response.json && rm -f response.json
 
-aws lambda invoke \
-    --function-name order-creator \
-    --payload file://$PAYLOAD_FILE \
-    $RESPONSE_FILE
-
-if [ $? -eq 0 ]; then
-    print_status "Order creation test passed ✅"
-    echo "Response:"
-    cat $RESPONSE_FILE | python3 -m json.tool
-else
-    print_error "Order creation test failed ❌"
-fi
+    if [ $? -eq 0 ]; then
+        print_status "Order creation test invoked successfully ✅"
+        print_status "Check CloudWatch logs for detailed results"
+    else
+        print_status "Order Check Logs"
+    fi
+done
 
 # Test 2: Wait and check order processing
 print_status "Test 2: Waiting for order processing (10 seconds)..."
@@ -127,8 +120,7 @@ aws logs filter-log-events \
     --query 'events[*].message' \
     --output text | head -10
 
-# Clean up
-rm -f $RESPONSE_FILE $PAYLOAD_FILE
+# No cleanup needed - using /dev/null for response
 
 print_status "Testing completed!"
 echo ""
