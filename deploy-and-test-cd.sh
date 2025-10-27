@@ -82,7 +82,7 @@ aws lambda invoke \
     --function-name order-creator \
     --invocation-type RequestResponse \
     --payload "{\"customerName\": \"$randomName\", \"snackItems\": [{\"name\": \"Test Chips\", \"quantity\": 2, \"price\": 3.99}, {\"name\": \"Test Soda\", \"quantity\": 1, \"price\": 1.99}], \"totalAmount\": 9.97}" \
-response.json 
+    response.json 
 
 if [ $? -eq 0 ]; then
     print_status "Order creation test invoked successfully ✅"
