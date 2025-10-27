@@ -78,11 +78,7 @@ customerNames=("Bilal Mustafa" "John Doe" "Jane Smith" "Michael Brown" "Emily Da
 # Choose one name at random
 randomName=${customerNames[$RANDOM % ${#customerNames[@]}]}
 
-aws lambda invoke \
-    --function-name order-creator \
-    --invocation-type RequestResponse \
-    --payload '{"customerName": "Test User", "snackItems": [{"name": "Chips", "quantity": 2, "price": 3.99}, {"name": "Soda", "quantity": 1, "price": 1.99}], "totalAmount": 9.97}' \
-    response.json
+aws lambda invoke --function-name order-creator --payload '{"test-payload": "main-test"}' --region eu-west-1 response.json
 
 if [ $? -eq 0 ]; then
     print_status "Order creation test invoked successfully ✅"
