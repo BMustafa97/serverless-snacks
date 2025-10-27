@@ -12,7 +12,7 @@ This project creates a small serverless system with two Lambda functions and Dyn
 
 ## Results
 
-- **[Conclusion.md](./docs/Conclusion.MD)** - Detailed system architecture, data flows, and component interactions
+- **[Conclusion.md](./docs/Conclusion.MD)** - Screengrans proving the application
 
 ## Architecture
 
