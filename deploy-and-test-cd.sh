@@ -76,9 +76,6 @@ print_status "Test 1: Creating a test order using 'main-test' event..."
 # names list
 customerNames=("Bilal Mustafa" "John Doe" "Jane Smith" "Michael Brown" "Emily Davis" "David Wilson" "Sarah Miller" "Chris Moore" "Jessica Taylor")
 # loop through names and choose one at random
-RANDOM_NAME=${customerNames[$RANDOM % ${#customerNames[@]}]}
-echo "Using customer name: $RANDOM_NAME"
-
 for name in "${customerNames[@]}"; do
     aws lambda invoke \
         --function-name order-creator \
