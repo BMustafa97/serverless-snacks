@@ -82,15 +82,14 @@ aws lambda invoke \
     --function-name order-creator \
     --invocation-type RequestResponse \
     --payload "{\"customerName\": \"$randomName\", \"snackItems\": [{\"name\": \"Test Chips\", \"quantity\": 2, \"price\": 3.99}, {\"name\": \"Test Soda\", \"quantity\": 1, \"price\": 1.99}], \"totalAmount\": 9.97}" \
-response.json && rm -f response.json
+response.json 
 
-    if [ $? -eq 0 ]; then
-        print_status "Order creation test invoked successfully ✅"
-        print_status "Check CloudWatch logs for detailed results"
-    else
-        print_status "Order Check Logs"
-    fi
-done
+if [ $? -eq 0 ]; then
+    print_status "Order creation test invoked successfully ✅"
+else
+    print_error "Order creation test invocation failed ❌"
+    exit 1
+fi
 
 # Test 2: Wait and check order processing
 print_status "Test 2: Waiting for order processing (10 seconds)..."
