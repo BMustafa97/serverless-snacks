@@ -8,13 +8,15 @@ This project creates a small serverless system with two Lambda functions and Dyn
 
 ### Start Time: 20:24 26/10/2025
 ### Finish Time: 22:00 26/10/2025
+### Stretch Goals: 00:00 27/10/2025
+
+## Results
+
+- **[Conclusion.md](./docs/Conclusion.MD)** - Detailed system architecture, data flows, and component interactions
 
 ## Architecture
 
-- **Lambda A**: [Description to be added]
-- **Lambda B**: [Description to be added]
-- **DynamoDB**: Data persistence layer
-- **Event-driven communication**: Connecting the Lambda functions
+- **[ARCHITECTURE.md](./docs/ARCHITECTURE.md)** - Detailed system architecture, data flows, and component interactions
 
 ## Development Phases
 
